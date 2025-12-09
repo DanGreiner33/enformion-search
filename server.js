@@ -64,6 +64,7 @@ app.post('/api/search', async (req, res) => {
                 'Accept': 'application/json',
                 'galaxy-ap-name': ENFORMION_AP_NAME,
                 'galaxy-ap-password': ENFORMION_AP_PASSWORD,
+                            'galaxy-search-type': 'Person'
             },
             body: JSON.stringify(searchBody)
         });
