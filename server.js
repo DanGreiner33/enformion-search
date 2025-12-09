@@ -76,7 +76,7 @@ app.post('/api/search', async (req, res) => {
         }
 
         // Use "Teaser" search type for list view - shows basic info only
-        const data = await callEnformionAPI(searchBody, 'Teaser');
+        const data = await callEnformionAPI(searchBody, 'Person');
         res.json(data);
 
     } catch (error) {
