@@ -40,7 +40,6 @@
             line-height: 1.6;
         }
 
-        /* Subtle grid background */
         body::before {
             content: '';
             position: fixed;
@@ -64,7 +63,6 @@
             z-index: 1;
         }
 
-        /* Header */
         .header {
             text-align: center;
             margin-bottom: 48px;
@@ -114,7 +112,6 @@
             text-transform: uppercase;
         }
 
-        /* Search Form */
         .search-card {
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
@@ -203,10 +200,6 @@
             box-shadow: 0 8px 30px var(--glow-blue);
         }
 
-        .search-btn:active {
-            transform: translateY(0);
-        }
-
         .search-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
@@ -218,7 +211,6 @@
             height: 18px;
         }
 
-        /* Loading Spinner */
         .spinner {
             width: 18px;
             height: 18px;
@@ -232,7 +224,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Status Bar */
         .status-bar {
             display: flex;
             align-items: center;
@@ -259,7 +250,6 @@
             50% { opacity: 0.5; }
         }
 
-        /* Results */
         .results-section {
             margin-top: 32px;
         }
@@ -291,16 +281,17 @@
         .results-grid {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
         }
 
-        /* Person Card */
+        /* Person Card - Collapsed (Teaser View) */
         .person-card {
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
             border-radius: 12px;
             overflow: hidden;
             transition: all 0.2s ease;
+            cursor: pointer;
         }
 
         .person-card:hover {
@@ -309,49 +300,129 @@
             box-shadow: 0 8px 30px rgba(0,0,0,0.3);
         }
 
-        .person-header {
+        .person-card.expanded {
+            cursor: default;
+        }
+
+        .person-summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .person-summary-left {
             display: flex;
             align-items: center;
             gap: 16px;
-            padding: 20px;
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-subtle);
         }
 
         .person-avatar {
-            width: 56px;
-            height: 56px;
+            width: 50px;
+            height: 50px;
             background: linear-gradient(135deg, var(--accent-blue-dim) 0%, var(--bg-elevated) 100%);
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
             color: var(--accent-blue);
+            flex-shrink: 0;
         }
 
-        .person-info h3 {
-            font-size: 18px;
+        .person-basic-info h3 {
+            font-size: 17px;
             font-weight: 600;
             margin-bottom: 4px;
         }
 
-        .person-info .age-location {
+        .person-basic-info .meta {
             font-size: 14px;
             color: var(--text-secondary);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
-        .person-body {
-            padding: 20px;
+        .person-basic-info .meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .person-basic-info .meta svg {
+            width: 14px;
+            height: 14px;
+            opacity: 0.7;
+        }
+
+        .view-details-btn {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            color: var(--accent-blue);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Instrument Sans', sans-serif;
+        }
+
+        .view-details-btn:hover {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        .view-details-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .view-details-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Person Card - Expanded (Full Details) */
+        .person-details {
+            display: none;
+            padding: 0 20px 20px;
+            border-top: 1px solid var(--border-subtle);
+            animation: slideDown 0.3s ease;
+        }
+
+        .person-card.expanded .person-details {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding-top: 20px;
         }
 
         .info-section {
-            margin-bottom: 20px;
-        }
-
-        .info-section:last-child {
-            margin-bottom: 0;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 16px;
         }
 
         .info-section-title {
@@ -360,7 +431,7 @@
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             font-family: 'JetBrains Mono', monospace;
             display: flex;
             align-items: center;
@@ -373,22 +444,22 @@
             stroke: var(--text-muted);
         }
 
-        .info-items {
+        .info-list {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 8px;
         }
 
         .info-item {
             background: var(--bg-primary);
             border: 1px solid var(--border-subtle);
-            padding: 8px 14px;
+            padding: 10px 14px;
             border-radius: 6px;
             font-size: 14px;
             color: var(--text-primary);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             transition: all 0.15s ease;
         }
 
@@ -397,22 +468,44 @@
             border-color: var(--border-active);
         }
 
-        .info-item.phone {
-            color: var(--accent-green);
-        }
-
-        .info-item.email {
-            color: var(--accent-blue);
-        }
-
-        .info-item.address {
-            color: var(--accent-amber);
-        }
+        .info-item.phone { color: var(--accent-green); }
+        .info-item.email { color: var(--accent-blue); }
+        .info-item.address { color: var(--accent-amber); }
 
         .info-item svg {
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             flex-shrink: 0;
+            opacity: 0.8;
+        }
+
+        .info-item-text {
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .info-item .type-badge {
+            font-size: 10px;
+            background: var(--bg-elevated);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .loading-details {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        .loading-details .spinner {
+            width: 24px;
+            height: 24px;
+            border-color: var(--border-active);
+            border-top-color: var(--accent-blue);
+            margin: 0 auto 12px;
         }
 
         /* Empty State */
@@ -435,10 +528,6 @@
             margin-bottom: 8px;
         }
 
-        .empty-state p {
-            font-size: 14px;
-        }
-
         /* Error State */
         .error-message {
             background: rgba(255, 92, 92, 0.1);
@@ -455,26 +544,26 @@
             display: block;
         }
 
-        /* Expandable sections */
-        .expand-btn {
-            background: transparent;
-            border: 1px solid var(--border-subtle);
-            color: var(--text-secondary);
-            padding: 8px 16px;
-            border-radius: 6px;
+        /* API Cost Warning */
+        .cost-notice {
+            background: rgba(255, 171, 0, 0.1);
+            border: 1px solid rgba(255, 171, 0, 0.3);
+            color: var(--accent-amber);
+            padding: 12px 16px;
+            border-radius: 8px;
             font-size: 13px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            font-family: 'Instrument Sans', sans-serif;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .expand-btn:hover {
-            background: var(--bg-elevated);
-            border-color: var(--border-active);
-            color: var(--text-primary);
+        .cost-notice svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
         }
 
-        /* Footer */
         .footer {
             text-align: center;
             margin-top: 60px;
@@ -489,32 +578,14 @@
             text-decoration: none;
         }
 
-        .footer a:hover {
-            text-decoration: underline;
-        }
-
-        /* Responsive */
         @media (max-width: 640px) {
-            .container {
-                padding: 24px 16px;
-            }
-            
-            .search-card {
-                padding: 20px;
-            }
-            
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .search-btn {
-                max-width: 100%;
-            }
-            
-            .person-header {
-                flex-direction: column;
-                text-align: center;
-            }
+            .container { padding: 24px 16px; }
+            .search-card { padding: 20px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .search-btn { max-width: 100%; }
+            .person-summary { flex-direction: column; gap: 16px; text-align: center; }
+            .person-summary-left { flex-direction: column; }
+            .view-details-btn { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -573,6 +644,15 @@
         </div>
 
         <div class="results-section" id="resultsSection" style="display: none;">
+            <div class="cost-notice">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4"/>
+                    <path d="M12 8h.01"/>
+                </svg>
+                <span>Click "View Details" to retrieve full contact information. Each detail lookup uses 1 API credit.</span>
+            </div>
+            
             <div class="results-header">
                 <h2 class="results-title">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -600,7 +680,9 @@
         const resultsGrid = document.getElementById('resultsGrid');
         const resultsCount = document.getElementById('resultsCount');
 
-        // Form submission
+        // Store search params for detail lookups
+        let currentSearchParams = {};
+
         searchForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -614,11 +696,11 @@
                 return;
             }
 
-            await performSearch({ firstName, lastName, city, state });
+            currentSearchParams = { firstName, lastName, city, state };
+            await performSearch(currentSearchParams);
         });
 
         async function performSearch(params) {
-            // Update UI for loading state
             searchBtn.disabled = true;
             searchBtn.innerHTML = '<span class="spinner"></span> Searching...';
             statusText.textContent = `Searching for ${params.firstName} ${params.lastName}...`;
@@ -628,9 +710,7 @@
             try {
                 const response = await fetch('/api/search', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(params)
                 });
 
@@ -644,7 +724,7 @@
                 
             } catch (error) {
                 console.error('Search error:', error);
-                showError(error.message || 'An error occurred while searching. Please try again.');
+                showError(error.message || 'An error occurred while searching.');
             } finally {
                 searchBtn.disabled = false;
                 searchBtn.innerHTML = `
@@ -658,9 +738,11 @@
         }
 
         function displayResults(data) {
-            const persons = data.persons || data.Persons || [];
+            // Handle different response formats
+            const persons = data.persons || data.Persons || data.person || [];
+            const personList = Array.isArray(persons) ? persons : [persons];
             
-            if (persons.length === 0) {
+            if (personList.length === 0 || !personList[0]) {
                 resultsSection.style.display = 'block';
                 resultsCount.textContent = '0 found';
                 resultsGrid.innerHTML = `
@@ -679,113 +761,253 @@
             }
 
             resultsSection.style.display = 'block';
-            resultsCount.textContent = `${persons.length} found`;
-            statusText.textContent = `Found ${persons.length} result${persons.length > 1 ? 's' : ''}`;
+            resultsCount.textContent = `${personList.length} found`;
+            statusText.textContent = `Found ${personList.length} result${personList.length > 1 ? 's' : ''}`;
             
-            resultsGrid.innerHTML = persons.map(person => createPersonCard(person)).join('');
+            resultsGrid.innerHTML = personList.map((person, index) => createPersonCard(person, index)).join('');
         }
 
-        function createPersonCard(person) {
+        function createPersonCard(person, index) {
             const name = formatName(person);
             const initials = getInitials(name);
             const age = person.Age || person.age || '';
-            const addresses = person.Addresses || person.addresses || [];
-            const phones = person.PhoneNumbers || person.phoneNumbers || [];
-            const emails = person.EmailAddresses || person.emailAddresses || [];
             
-            const primaryAddress = addresses[0];
-            const location = primaryAddress ? 
-                `${primaryAddress.City || ''}, ${primaryAddress.State || ''}`.replace(', ,', ',').replace(/^,|,$/g, '').trim() : 
-                '';
+            // Get primary location from teaser data
+            const locations = person.Locations || person.locations || [];
+            const addresses = person.Addresses || person.addresses || [];
+            let location = '';
+            
+            if (locations.length > 0) {
+                const loc = locations[0];
+                location = `${loc.City || loc.city || ''}, ${loc.State || loc.state || ''}`.replace(/^, |, $/g, '');
+            } else if (addresses.length > 0) {
+                const addr = addresses[0];
+                location = `${addr.City || addr.city || ''}, ${addr.State || addr.state || ''}`.replace(/^, |, $/g, '');
+            }
+
+            // Get DOB for more precise lookups
+            const dob = person.Dob || person.dob || '';
 
             return `
-                <div class="person-card">
-                    <div class="person-header">
-                        <div class="person-avatar">${initials}</div>
-                        <div class="person-info">
-                            <h3>${escapeHtml(name)}</h3>
-                            <div class="age-location">
-                                ${age ? `Age ${age}` : ''}${age && location ? ' • ' : ''}${escapeHtml(location)}
+                <div class="person-card" id="person-${index}" data-index="${index}">
+                    <div class="person-summary">
+                        <div class="person-summary-left">
+                            <div class="person-avatar">${initials}</div>
+                            <div class="person-basic-info">
+                                <h3>${escapeHtml(name)}</h3>
+                                <div class="meta">
+                                    ${age ? `<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Age ${age}</span>` : ''}
+                                    ${location ? `<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ${escapeHtml(location)}</span>` : ''}
+                                </div>
                             </div>
                         </div>
+                        <button class="view-details-btn" onclick="loadPersonDetails(${index}, '${escapeAttr(person.FirstName || person.firstName || '')}', '${escapeAttr(person.LastName || person.lastName || '')}', '${escapeAttr(location)}', '${escapeAttr(dob)}')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            View Details
+                        </button>
                     </div>
-                    <div class="person-body">
-                        ${phones.length > 0 ? `
-                            <div class="info-section">
-                                <div class="info-section-title">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                                    </svg>
-                                    Phone Numbers
-                                </div>
-                                <div class="info-items">
-                                    ${phones.slice(0, 5).map(phone => `
-                                        <span class="info-item phone">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                                            </svg>
-                                            ${formatPhone(phone.Number || phone.number || phone)}
-                                        </span>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        ` : ''}
-                        
-                        ${emails.length > 0 ? `
-                            <div class="info-section">
-                                <div class="info-section-title">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                                        <polyline points="22,6 12,13 2,6"/>
-                                    </svg>
-                                    Email Addresses
-                                </div>
-                                <div class="info-items">
-                                    ${emails.slice(0, 3).map(email => `
-                                        <span class="info-item email">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                                                <polyline points="22,6 12,13 2,6"/>
-                                            </svg>
-                                            ${escapeHtml(email.Address || email.address || email)}
-                                        </span>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        ` : ''}
-                        
-                        ${addresses.length > 0 ? `
-                            <div class="info-section">
-                                <div class="info-section-title">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                        <circle cx="12" cy="10" r="3"/>
-                                    </svg>
-                                    Addresses
-                                </div>
-                                <div class="info-items">
-                                    ${addresses.slice(0, 3).map(addr => `
-                                        <span class="info-item address">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                                <circle cx="12" cy="10" r="3"/>
-                                            </svg>
-                                            ${formatAddress(addr)}
-                                        </span>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        ` : ''}
+                    <div class="person-details" id="details-${index}">
+                        <!-- Details loaded on click -->
                     </div>
                 </div>
             `;
         }
 
+        async function loadPersonDetails(index, firstName, lastName, location, dob) {
+            const card = document.getElementById(`person-${index}`);
+            const detailsDiv = document.getElementById(`details-${index}`);
+            const btn = card.querySelector('.view-details-btn');
+            
+            // If already expanded, collapse it
+            if (card.classList.contains('expanded')) {
+                card.classList.remove('expanded');
+                btn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    View Details
+                `;
+                return;
+            }
+
+            // Show loading state
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Loading...';
+            
+            detailsDiv.innerHTML = `
+                <div class="loading-details">
+                    <div class="spinner"></div>
+                    <div>Loading contact details...</div>
+                </div>
+            `;
+            card.classList.add('expanded');
+
+            try {
+                // Parse city/state from location
+                const [city, state] = location.split(',').map(s => s.trim());
+
+                const response = await fetch('/api/person-details', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        firstName: firstName || currentSearchParams.firstName,
+                        lastName: lastName || currentSearchParams.lastName,
+                        city: city || currentSearchParams.city,
+                        state: state || currentSearchParams.state,
+                        dob: dob
+                    })
+                });
+
+                const person = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(person.error || 'Failed to load details');
+                }
+
+                detailsDiv.innerHTML = createDetailsContent(person);
+                btn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18"/><path d="M6 6l12 12"/>
+                    </svg>
+                    Hide Details
+                `;
+
+            } catch (error) {
+                console.error('Details error:', error);
+                detailsDiv.innerHTML = `
+                    <div class="loading-details" style="color: var(--accent-red);">
+                        Failed to load details: ${escapeHtml(error.message)}
+                    </div>
+                `;
+                btn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    Retry
+                `;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        function createDetailsContent(person) {
+            const phones = person.PhoneNumbers || person.phoneNumbers || [];
+            const emails = person.EmailAddresses || person.emailAddresses || [];
+            const addresses = person.Addresses || person.addresses || [];
+
+            let html = '<div class="details-grid">';
+
+            // Phone Numbers
+            if (phones.length > 0) {
+                html += `
+                    <div class="info-section">
+                        <div class="info-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                            </svg>
+                            Phone Numbers (${phones.length})
+                        </div>
+                        <div class="info-list">
+                            ${phones.slice(0, 8).map(phone => {
+                                const number = phone.PhoneNumber || phone.phoneNumber || phone.Number || phone.number || phone;
+                                const type = phone.PhoneType || phone.phoneType || phone.Type || '';
+                                return `
+                                    <div class="info-item phone">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                                        </svg>
+                                        <span class="info-item-text">${formatPhone(number)}</span>
+                                        ${type ? `<span class="type-badge">${escapeHtml(type)}</span>` : ''}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Email Addresses
+            if (emails.length > 0) {
+                html += `
+                    <div class="info-section">
+                        <div class="info-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                            Email Addresses (${emails.length})
+                        </div>
+                        <div class="info-list">
+                            ${emails.slice(0, 6).map(email => {
+                                const address = email.EmailAddress || email.emailAddress || email.Address || email.address || email;
+                                return `
+                                    <div class="info-item email">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                            <polyline points="22,6 12,13 2,6"/>
+                                        </svg>
+                                        <span class="info-item-text">${escapeHtml(address)}</span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Addresses
+            if (addresses.length > 0) {
+                html += `
+                    <div class="info-section">
+                        <div class="info-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            Addresses (${addresses.length})
+                        </div>
+                        <div class="info-list">
+                            ${addresses.slice(0, 5).map(addr => {
+                                const fullAddr = addr.FullAddress || addr.fullAddress || formatAddress(addr);
+                                return `
+                                    <div class="info-item address">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                            <circle cx="12" cy="10" r="3"/>
+                                        </svg>
+                                        <span class="info-item-text">${escapeHtml(fullAddr)}</span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Show message if no contact info available
+            if (phones.length === 0 && emails.length === 0 && addresses.length === 0) {
+                html += `
+                    <div class="info-section" style="grid-column: 1 / -1; text-align: center; color: var(--text-muted);">
+                        No contact information available for this person.
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        // Utility functions
         function formatName(person) {
-            const first = person.FirstName || person.firstName || '';
-            const middle = person.MiddleName || person.middleName || '';
-            const last = person.LastName || person.lastName || '';
-            return [first, middle, last].filter(Boolean).join(' ');
+            const first = person.FirstName || person.firstName || person.Name?.FirstName || '';
+            const middle = person.MiddleName || person.middleName || person.Name?.MiddleName || '';
+            const last = person.LastName || person.lastName || person.Name?.LastName || '';
+            return [first, middle, last].filter(Boolean).join(' ') || person.FullName || person.fullName || 'Unknown';
         }
 
         function getInitials(name) {
@@ -794,7 +1016,7 @@
                 .map(n => n[0])
                 .slice(0, 2)
                 .join('')
-                .toUpperCase();
+                .toUpperCase() || '??';
         }
 
         function formatPhone(phone) {
@@ -809,12 +1031,22 @@
         function formatAddress(addr) {
             if (typeof addr === 'string') return addr;
             const parts = [
-                addr.AddressLine1 || addr.addressLine1 || addr.Street || addr.street || '',
+                addr.HouseNumber || '',
+                addr.StreetPreDirection || '',
+                addr.StreetName || '',
+                addr.StreetType || '',
+                addr.StreetPostDirection || ''
+            ].filter(Boolean).join(' ');
+            
+            const unit = addr.Unit ? ` ${addr.UnitType || 'Unit'} ${addr.Unit}` : '';
+            const cityStateZip = [
                 addr.City || addr.city || '',
                 addr.State || addr.state || '',
-                addr.Zip || addr.zip || addr.ZipCode || addr.zipCode || ''
-            ].filter(Boolean);
-            return parts.join(', ');
+                addr.Zip || addr.zip || ''
+            ].filter(Boolean).join(', ').replace(/, ([A-Z]{2}),/, ' $1');
+            
+            return [parts + unit, cityStateZip].filter(Boolean).join('; ') || 
+                   addr.AddressLine1 || addr.addressLine1 || 'Address on file';
         }
 
         function escapeHtml(text) {
@@ -822,6 +1054,11 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        function escapeAttr(text) {
+            if (!text) return '';
+            return text.replace(/'/g, "\\'").replace(/"/g, '\\"');
         }
 
         function showError(message) {
@@ -834,20 +1071,15 @@
             errorMessage.classList.remove('visible');
         }
 
-        // Check API health on load
-        async function checkHealth() {
-            try {
-                const response = await fetch('/api/health');
-                const data = await response.json();
+        // Health check
+        fetch('/api/health')
+            .then(r => r.json())
+            .then(data => {
                 if (!data.configured) {
                     statusText.textContent = 'Warning: API credentials not configured';
                 }
-            } catch (error) {
-                console.error('Health check failed:', error);
-            }
-        }
-
-        checkHealth();
+            })
+            .catch(() => {});
     </script>
 </body>
 </html>
