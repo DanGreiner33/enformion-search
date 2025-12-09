@@ -12,6 +12,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // EnformionGO API configuration
+// CORRECT endpoint: https://devapi.enformion.com/PersonSearch
 const ENFORMION_API_URL = 'https://devapi.enformion.com/PersonSearch';
 const ENFORMION_AP_NAME = process.env.ENFORMION_AP_NAME;
 const ENFORMION_AP_PASSWORD = process.env.ENFORMION_AP_PASSWORD;
@@ -34,28 +35,29 @@ app.post('/api/search', async (req, res) => {
             });
         }
 
-        // Build the request body
+        // Build the request body according to EnformionGO docs
         const searchBody = {
             FirstName: firstName,
             LastName: lastName,
             Page: 1,
-            ResultsPerPage: 25,
-            Includes: [
-                "Addresses",
-                "PhoneNumbers", 
-                "EmailAddresses",
-                "Relatives",
-                "Associates",
-                "Age"
-            ]
+            ResultsPerPage: 25
         };
 
-        // Add city/state if provided
+        // Add city/state if provided - format as AddressLine2: "City, ST"
         if (city || state) {
             searchBody.Addresses = [{
                 AddressLine2: [city, state].filter(Boolean).join(', ')
             }];
         }
+
+        console.log('=== EnformionGO API Request ===');
+        console.log('URL:', ENFORMION_API_URL);
+        console.log('Headers:', {
+            'galaxy-ap-name': ENFORMION_AP_NAME,
+            'galaxy-ap-password': '***hidden***',
+            'galaxy-search-type': 'Person'
+        });
+        console.log('Body:', JSON.stringify(searchBody, null, 2));
 
         const response = await fetch(ENFORMION_API_URL, {
             method: 'POST',
@@ -64,21 +66,37 @@ app.post('/api/search', async (req, res) => {
                 'Accept': 'application/json',
                 'galaxy-ap-name': ENFORMION_AP_NAME,
                 'galaxy-ap-password': ENFORMION_AP_PASSWORD,
-                            'galaxy-search-type': 'Person'
+                'galaxy-search-type': 'Person'
             },
             body: JSON.stringify(searchBody)
         });
 
+        console.log('=== EnformionGO API Response ===');
+        console.log('Status:', response.status, response.statusText);
+
+        const responseText = await response.text();
+        console.log('Response body:', responseText.substring(0, 500));
+
         if (!response.ok) {
-            const errorText = await response.text();
-            console.error('EnformionGO API Error:', response.status, errorText);
+            console.error('EnformionGO API Error:', response.status, responseText);
             return res.status(response.status).json({ 
                 error: `API request failed: ${response.statusText}`,
-                details: errorText
+                details: responseText
             });
         }
 
-        const data = await response.json();
+        // Parse the response
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('Failed to parse response:', parseError);
+            return res.status(500).json({
+                error: 'Failed to parse API response',
+                details: responseText.substring(0, 200)
+            });
+        }
+
         res.json(data);
 
     } catch (error) {
@@ -94,7 +112,8 @@ app.post('/api/search', async (req, res) => {
 app.get('/api/health', (req, res) => {
     res.json({ 
         status: 'ok',
-        configured: !!(ENFORMION_AP_NAME && ENFORMION_AP_PASSWORD)
+        configured: !!(ENFORMION_AP_NAME && ENFORMION_AP_PASSWORD),
+        apiUrl: ENFORMION_API_URL
     });
 });
 
@@ -105,5 +124,6 @@ app.get('/', (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    console.log(`API URL: ${ENFORMION_API_URL}`);
     console.log(`API credentials configured: ${!!(ENFORMION_AP_NAME && ENFORMION_AP_PASSWORD)}`);
 });
