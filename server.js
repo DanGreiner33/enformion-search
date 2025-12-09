@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // EnformionGO API configuration
-const ENFORMION_API_URL = 'https://devapi.enformion.com/PersonSearch/Search';
+const ENFORMION_API_URL = 'https://devapi.enformion.com/PersonSearch';
 const ENFORMION_AP_NAME = process.env.ENFORMION_AP_NAME;
 const ENFORMION_AP_PASSWORD = process.env.ENFORMION_AP_PASSWORD;
 
