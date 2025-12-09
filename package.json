@@ -1,0 +1,21 @@
+{
+  "name": "enformion-search",
+  "version": "1.0.0",
+  "description": "Internal people search tool using EnformionGO API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["enformion", "people-search", "contact-finder"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1"
+  }
+}

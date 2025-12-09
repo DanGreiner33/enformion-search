@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Finder | Internal Search Tool</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0c10;
+            --bg-secondary: #12151c;
+            --bg-card: #181c25;
+            --bg-elevated: #1e2330;
+            --border-subtle: #2a3042;
+            --border-active: #3d4663;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0b0;
+            --text-muted: #5c6378;
+            --accent-blue: #4c9aff;
+            --accent-blue-dim: #2d5a9e;
+            --accent-green: #36b37e;
+            --accent-amber: #ffab00;
+            --accent-red: #ff5c5c;
+            --glow-blue: rgba(76, 154, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Subtle grid background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(76, 154, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(76, 154, 255, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-blue-dim) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px var(--glow-blue);
+        }
+
+        .logo-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Search Form */
+        .search-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .search-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+            opacity: 0.5;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .form-input {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-size: 15px;
+            color: var(--text-primary);
+            font-family: 'Instrument Sans', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px var(--glow-blue);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-blue-dim) 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 16px 32px;
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'Instrument Sans', sans-serif;
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--glow-blue);
+        }
+
+        .search-btn:active {
+            transform: translateY(0);
+        }
+
+        .search-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .search-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Status Bar */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: pulse 2s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Results */
+        .results-section {
+            margin-top: 32px;
+        }
+
+        .results-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .results-title {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .results-count {
+            background: var(--bg-elevated);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .results-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Person Card */
+        .person-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .person-card:hover {
+            border-color: var(--border-active);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+
+        .person-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .person-avatar {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--accent-blue-dim) 0%, var(--bg-elevated) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+
+        .person-info h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .person-info .age-location {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .person-body {
+            padding: 20px;
+        }
+
+        .info-section {
+            margin-bottom: 20px;
+        }
+
+        .info-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-section-title svg {
+            width: 14px;
+            height: 14px;
+            stroke: var(--text-muted);
+        }
+
+        .info-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .info-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-subtle);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 14px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.15s ease;
+        }
+
+        .info-item:hover {
+            background: var(--bg-elevated);
+            border-color: var(--border-active);
+        }
+
+        .info-item.phone {
+            color: var(--accent-green);
+        }
+
+        .info-item.email {
+            color: var(--accent-blue);
+        }
+
+        .info-item.address {
+            color: var(--accent-amber);
+        }
+
+        .info-item svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            stroke: var(--border-active);
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        /* Error State */
+        .error-message {
+            background: rgba(255, 92, 92, 0.1);
+            border: 1px solid rgba(255, 92, 92, 0.3);
+            color: var(--accent-red);
+            padding: 16px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .error-message.visible {
+            display: block;
+        }
+
+        /* Expandable sections */
+        .expand-btn {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-family: 'Instrument Sans', sans-serif;
+        }
+
+        .expand-btn:hover {
+            background: var(--bg-elevated);
+            border-color: var(--border-active);
+            color: var(--text-primary);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .footer a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 24px 16px;
+            }
+            
+            .search-card {
+                padding: 20px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-btn {
+                max-width: 100%;
+            }
+            
+            .person-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                        <circle cx="11" cy="8" r="2"/>
+                        <path d="M11 10v2"/>
+                    </svg>
+                </div>
+                <span class="logo-text">Contact Finder</span>
+            </div>
+            <p class="tagline">Internal People Search Tool</p>
+        </header>
+
+        <div class="search-card">
+            <form id="searchForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="firstName">First Name *</label>
+                        <input type="text" id="firstName" class="form-input" placeholder="John" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" class="form-input" placeholder="Smith" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="city">City</label>
+                        <input type="text" id="city" class="form-input" placeholder="Los Angeles">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="state">State</label>
+                        <input type="text" id="state" class="form-input" placeholder="CA" maxlength="2">
+                    </div>
+                </div>
+                <button type="submit" class="search-btn" id="searchBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                    Search
+                </button>
+            </form>
+            
+            <div class="status-bar">
+                <span class="status-dot"></span>
+                <span id="statusText">Ready to search</span>
+            </div>
+            
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <div class="results-header">
+                <h2 class="results-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    Results
+                </h2>
+                <span class="results-count" id="resultsCount">0 found</span>
+            </div>
+            <div class="results-grid" id="resultsGrid"></div>
+        </div>
+
+        <footer class="footer">
+            <p>Powered by <a href="https://go.enformion.com" target="_blank">EnformionGO</a> • Internal Use Only</p>
+        </footer>
+    </div>
+
+    <script>
+        const searchForm = document.getElementById('searchForm');
+        const searchBtn = document.getElementById('searchBtn');
+        const statusText = document.getElementById('statusText');
+        const errorMessage = document.getElementById('errorMessage');
+        const resultsSection = document.getElementById('resultsSection');
+        const resultsGrid = document.getElementById('resultsGrid');
+        const resultsCount = document.getElementById('resultsCount');
+
+        // Form submission
+        searchForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const city = document.getElementById('city').value.trim();
+            const state = document.getElementById('state').value.trim().toUpperCase();
+
+            if (!firstName || !lastName) {
+                showError('Please enter both first and last name');
+                return;
+            }
+
+            await performSearch({ firstName, lastName, city, state });
+        });
+
+        async function performSearch(params) {
+            // Update UI for loading state
+            searchBtn.disabled = true;
+            searchBtn.innerHTML = '<span class="spinner"></span> Searching...';
+            statusText.textContent = `Searching for ${params.firstName} ${params.lastName}...`;
+            hideError();
+            resultsSection.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(params)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Search failed');
+                }
+
+                displayResults(data);
+                
+            } catch (error) {
+                console.error('Search error:', error);
+                showError(error.message || 'An error occurred while searching. Please try again.');
+            } finally {
+                searchBtn.disabled = false;
+                searchBtn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                    Search
+                `;
+            }
+        }
+
+        function displayResults(data) {
+            const persons = data.persons || data.Persons || [];
+            
+            if (persons.length === 0) {
+                resultsSection.style.display = 'block';
+                resultsCount.textContent = '0 found';
+                resultsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="M21 21l-4.35-4.35"/>
+                            <path d="M8 11h6"/>
+                        </svg>
+                        <h3>No Results Found</h3>
+                        <p>Try adjusting your search criteria or check the spelling.</p>
+                    </div>
+                `;
+                statusText.textContent = 'No matches found';
+                return;
+            }
+
+            resultsSection.style.display = 'block';
+            resultsCount.textContent = `${persons.length} found`;
+            statusText.textContent = `Found ${persons.length} result${persons.length > 1 ? 's' : ''}`;
+            
+            resultsGrid.innerHTML = persons.map(person => createPersonCard(person)).join('');
+        }
+
+        function createPersonCard(person) {
+            const name = formatName(person);
+            const initials = getInitials(name);
+            const age = person.Age || person.age || '';
+            const addresses = person.Addresses || person.addresses || [];
+            const phones = person.PhoneNumbers || person.phoneNumbers || [];
+            const emails = person.EmailAddresses || person.emailAddresses || [];
+            
+            const primaryAddress = addresses[0];
+            const location = primaryAddress ? 
+                `${primaryAddress.City || ''}, ${primaryAddress.State || ''}`.replace(', ,', ',').replace(/^,|,$/g, '').trim() : 
+                '';
+
+            return `
+                <div class="person-card">
+                    <div class="person-header">
+                        <div class="person-avatar">${initials}</div>
+                        <div class="person-info">
+                            <h3>${escapeHtml(name)}</h3>
+                            <div class="age-location">
+                                ${age ? `Age ${age}` : ''}${age && location ? ' • ' : ''}${escapeHtml(location)}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="person-body">
+                        ${phones.length > 0 ? `
+                            <div class="info-section">
+                                <div class="info-section-title">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                                    </svg>
+                                    Phone Numbers
+                                </div>
+                                <div class="info-items">
+                                    ${phones.slice(0, 5).map(phone => `
+                                        <span class="info-item phone">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                                            </svg>
+                                            ${formatPhone(phone.Number || phone.number || phone)}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        ${emails.length > 0 ? `
+                            <div class="info-section">
+                                <div class="info-section-title">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                        <polyline points="22,6 12,13 2,6"/>
+                                    </svg>
+                                    Email Addresses
+                                </div>
+                                <div class="info-items">
+                                    ${emails.slice(0, 3).map(email => `
+                                        <span class="info-item email">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                                <polyline points="22,6 12,13 2,6"/>
+                                            </svg>
+                                            ${escapeHtml(email.Address || email.address || email)}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        ${addresses.length > 0 ? `
+                            <div class="info-section">
+                                <div class="info-section-title">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                    </svg>
+                                    Addresses
+                                </div>
+                                <div class="info-items">
+                                    ${addresses.slice(0, 3).map(addr => `
+                                        <span class="info-item address">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                                <circle cx="12" cy="10" r="3"/>
+                                            </svg>
+                                            ${formatAddress(addr)}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function formatName(person) {
+            const first = person.FirstName || person.firstName || '';
+            const middle = person.MiddleName || person.middleName || '';
+            const last = person.LastName || person.lastName || '';
+            return [first, middle, last].filter(Boolean).join(' ');
+        }
+
+        function getInitials(name) {
+            return name.split(' ')
+                .filter(Boolean)
+                .map(n => n[0])
+                .slice(0, 2)
+                .join('')
+                .toUpperCase();
+        }
+
+        function formatPhone(phone) {
+            if (!phone) return '';
+            const cleaned = phone.toString().replace(/\D/g, '');
+            if (cleaned.length === 10) {
+                return `(${cleaned.slice(0,3)}) ${cleaned.slice(3,6)}-${cleaned.slice(6)}`;
+            }
+            return phone;
+        }
+
+        function formatAddress(addr) {
+            if (typeof addr === 'string') return addr;
+            const parts = [
+                addr.AddressLine1 || addr.addressLine1 || addr.Street || addr.street || '',
+                addr.City || addr.city || '',
+                addr.State || addr.state || '',
+                addr.Zip || addr.zip || addr.ZipCode || addr.zipCode || ''
+            ].filter(Boolean);
+            return parts.join(', ');
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('visible');
+            statusText.textContent = 'Search failed';
+        }
+
+        function hideError() {
+            errorMessage.classList.remove('visible');
+        }
+
+        // Check API health on load
+        async function checkHealth() {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                if (!data.configured) {
+                    statusText.textContent = 'Warning: API credentials not configured';
+                }
+            } catch (error) {
+                console.error('Health check failed:', error);
+            }
+        }
+
+        checkHealth();
+    </script>
+</body>
+</html>
