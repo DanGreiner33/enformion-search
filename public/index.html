@@ -587,6 +587,98 @@
             .person-summary-left { flex-direction: column; }
             .view-details-btn { width: 100%; justify-content: center; }
         }
+        /* Credit Confirmation Modal */
+        .credit-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .credit-modal-overlay.active {
+            display: flex;
+        }
+        .credit-modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-active);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            animation: slideDown 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        .credit-modal-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(255, 171, 0, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+        .credit-modal-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--accent-amber);
+        }
+        .credit-modal h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        .credit-modal p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+        .credit-modal .credit-cost {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent-amber);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .credit-modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .credit-modal-actions button {
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-family: 'Instrument Sans', sans-serif;
+        }
+        .modal-btn-cancel {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+        }
+        .modal-btn-cancel:hover {
+            background: var(--bg-secondary);
+            border-color: var(--border-active);
+        }
+        .modal-btn-confirm {
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-blue-dim) 100%);
+            border: none;
+            color: white;
+        }
+        .modal-btn-confirm:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px var(--glow-blue);
+        }
+    
     </style>
 </head>
 <body>
@@ -650,7 +742,7 @@
                     <path d="M12 16v-4"/>
                     <path d="M12 8h.01"/>
                 </svg>
-                <span>Click "View Details" to retrieve full contact information. Each detail lookup uses 1 API credit.</span>
+                <span>Click "View Details" to retrieve full contact information. Each detail lookup uses 3 credits.</span>
             </div>
             
             <div class="results-header">
@@ -671,6 +763,25 @@
         </footer>
     </div>
 
+
+        <!-- Credit Confirmation Modal -->
+    <div class="credit-modal-overlay" id="creditModal">
+        <div class="credit-modal">
+            <div class="credit-modal-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 8v4"/>
+                    <path d="M12 16h.01"/>
+                </svg>
+            </div>
+            <h3>Confirm Credit Usage</h3>
+            <p>Viewing full contact details for this person will use <span class="credit-cost">3 credits</span> from your account.</p>
+            <div class="credit-modal-actions">
+                <button class="modal-btn-cancel" onclick="closeCreditModal()">Cancel</button>
+                <button class="modal-btn-confirm" onclick="confirmCreditUsage()">Use 3 Credits</button>
+            </div>
+        </div>
+    </div>
     <script>
         const searchForm = document.getElementById('searchForm');
         const searchBtn = document.getElementById('searchBtn');
@@ -801,7 +912,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button class="view-details-btn" onclick="loadPersonDetails(${index}, '${escapeAttr(person.FirstName || person.firstName || '')}', '${escapeAttr(person.LastName || person.lastName || '')}', '${escapeAttr(location)}', '${escapeAttr(dob)}')">
+                        <button class="view-details-btn" onclick="showCreditModal(${index}, '${escapeAttr(person.FirstName || person.firstName || '')}', '${escapeAttr(person.LastName || person.lastName || '')}', '${escapeAttr(location)}', '${escapeAttr(dob)}')">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                                 <circle cx="12" cy="12" r="3"/>
@@ -816,6 +927,34 @@
             `;
         }
 
+                // Credit confirmation modal logic
+        let pendingDetailRequest = null;
+
+        function showCreditModal(index, firstName, lastName, location, dob) {
+            // If already expanded, just collapse
+            const card = document.getElementById(`person-${index}`);
+            if (card.classList.contains('expanded')) {
+                loadPersonDetails(index, firstName, lastName, location, dob);
+                return;
+            }
+            pendingDetailRequest = { index, firstName, lastName, location, dob };
+            document.getElementById('creditModal').classList.add('active');
+        }
+
+        function closeCreditModal() {
+            document.getElementById('creditModal').classList.remove('active');
+            pendingDetailRequest = null;
+        }
+
+        function confirmCreditUsage() {
+            if (pendingDetailRequest) {
+                const { index, firstName, lastName, location, dob } = pendingDetailRequest;
+                closeCreditModal();
+                loadPersonDetails(index, firstName, lastName, location, dob);
+            }
+        }
+
+        
         async function loadPersonDetails(index, firstName, lastName, location, dob) {
             const card = document.getElementById(`person-${index}`);
             const detailsDiv = document.getElementById(`details-${index}`);
