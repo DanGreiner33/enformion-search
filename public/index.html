@@ -947,11 +947,34 @@
 
         function confirmCreditUsage() {
             if (pendingDetailRequest) {
-                const { index, firstName, lastName, location, dob } = pendingDetailRequest;
-                closeCreditModal();
-                loadPersonDetails(index, firstName, lastName, location, dob);
+                // Disable confirm button to prevent double-clicks
+                const confirmBtn = document.querySelector('.modal-btn-confirm');
+                confirmBtn.disabled = true;
+                confirmBtn.textContent = 'Processing...';
+                // Ask parent (ToolBox dashboard) to deduct credits
+                window.parent.postMessage({ type: 'useCredits', amount: 3 }, '*');
             }
         }
+
+        // Listen for credit deduction response from parent
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'creditsUsed') {
+                const confirmBtn = document.querySelector('.modal-btn-confirm');
+                if (event.data.success) {
+                    const { index, firstName, lastName, location, dob } = pendingDetailRequest;
+                    closeCreditModal();
+                    loadPersonDetails(index, firstName, lastName, location, dob);
+                } else {
+                    // Show error in modal
+                    closeCreditModal();
+                    alert(event.data.error || 'Failed to use credits. Please try again.');
+                }
+                if (confirmBtn) {
+                    confirmBtn.disabled = false;
+                    confirmBtn.textContent = 'Use 3 Credits';
+                }
+            }
+        });
 
         
         async function loadPersonDetails(index, firstName, lastName, location, dob) {
